@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "EPL Soccer Tours - Professional Player & Coach Experience",
@@ -58,9 +60,21 @@ export default function RootLayout({
         <link rel="icon" href="/logo.png" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased min-h-screen relative`}
       >
-        {children}
+        <div
+          className="fixed inset-0 w-full h-full bg-no-repeat bg-center opacity-[0.05] pointer-events-none z-0"
+          style={{
+            backgroundImage: 'url("/logo.png")',
+            backgroundSize: "100%",
+            transform: "scale(1.00)",
+          }}
+        />
+        <div className="relative z-10">
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
