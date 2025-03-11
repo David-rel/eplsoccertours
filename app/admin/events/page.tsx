@@ -40,6 +40,7 @@ export default function EventsAdminPage() {
     minAge: 0,
     maxAge: 99,
   });
+  const [generatingPaymentLink, setGeneratingPaymentLink] = useState(false);
   const router = useRouter();
 
   // Check localStorage on initial load
@@ -187,6 +188,74 @@ export default function EventsAdminPage() {
       setUploading(false);
       setUploadProgress(100);
       setTimeout(() => setUploadProgress(0), 1000);
+    }
+  };
+
+  const generateBryteWireLink = async () => {
+    console.log("Generate button clicked");
+    console.log("Form data:", {
+      name: formData.name,
+      price: formData.pricePerPerson,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+    });
+
+    if (!formData.name || formData.pricePerPerson <= 0) {
+      const missing = [];
+      if (!formData.name) missing.push("event name");
+      if (formData.pricePerPerson <= 0) missing.push("price per person");
+
+      setMessage(`Please fill in required fields: ${missing.join(", ")}`);
+      return;
+    }
+
+    setGeneratingPaymentLink(true);
+    setMessage("Generating payment link...");
+
+    try {
+      console.log("Sending API request to generate payment link...");
+      const response = await fetch("/api/brytewire/generate-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic " + btoa(`${username}:${password}`),
+        },
+        body: JSON.stringify({
+          eventName: formData.name,
+          description: formData.description || formData.name,
+          price: formData.pricePerPerson,
+          startDate: formData.startDate || new Date().toISOString(),
+          endDate: formData.endDate || new Date().toISOString(),
+        }),
+      });
+
+      console.log("API response status:", response.status);
+      const data = await response.json();
+      console.log("API response data:", data);
+
+      if (response.ok) {
+        setFormData((prev) => ({
+          ...prev,
+          paymentLink: data.paymentLink,
+        }));
+
+        if (data.testMode) {
+          setMessage(
+            "Test payment link generated. This will NOT process real payments."
+          );
+        } else {
+          setMessage("Payment link generated successfully!");
+        }
+      } else {
+        setMessage(
+          `Error generating payment link: ${data.error || "Unknown error"}`
+        );
+      }
+    } catch (error) {
+      console.error("Error generating payment link:", error);
+      setMessage("Error connecting to payment API");
+    } finally {
+      setGeneratingPaymentLink(false);
     }
   };
 
@@ -537,16 +606,97 @@ export default function EventsAdminPage() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  Payment Link (Optional)
+                  BryteWire Payment Link
                 </label>
-                <input
-                  type="text"
-                  name="paymentLink"
-                  value={formData.paymentLink}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/payment"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
+                <div className="mt-1 flex rounded-md shadow-sm">
+                  <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                    URL
+                  </span>
+                  <input
+                    type="text"
+                    name="paymentLink"
+                    value={formData.paymentLink}
+                    onChange={handleInputChange}
+                    placeholder="Generated payment link will appear here"
+                    className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div className="mt-2 flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={generateBryteWireLink}
+                    disabled={generatingPaymentLink}
+                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${
+                      generatingPaymentLink
+                        ? "bg-blue-300 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    }`}
+                  >
+                    {generatingPaymentLink ? (
+                      <>
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Generating...
+                      </>
+                    ) : (
+                      "Generate Payment Link"
+                    )}
+                  </button>
+                  {formData.paymentLink && (
+                    <a
+                      href={formData.paymentLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      Test Link
+                    </a>
+                  )}
+                </div>
+                <p className="mt-1 text-sm text-gray-500">
+                  Click "Generate Payment Link" to create a payment link for
+                  this event.
+                  {message && message.includes("Test payment") && (
+                    <span className="mt-1 block font-medium text-yellow-600">
+                      Note: Currently generating test links only. These will not
+                      process real payments.
+                    </span>
+                  )}
+                </p>
+
+                <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-200">
+                  <h4 className="font-medium text-blue-800 mb-2">
+                    About Payment Integration:
+                  </h4>
+                  <p className="text-sm text-blue-700 mb-2">
+                    Payment links are generated using your payment gateway API
+                    key. Make sure your API key is properly configured in the
+                    environment variables as <code>BRYTEWIRE_API_KEY</code>.
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    When visitors click "Pay Now" on the events page, they'll be
+                    directed to the payment form with pre-filled event
+                    information.
+                  </p>
+                </div>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">
