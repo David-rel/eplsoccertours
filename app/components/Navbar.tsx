@@ -9,8 +9,9 @@ const navigationLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "Player Registration", href: "/player-registration" },
-  { name: "Team Registration", href: "/team-registration" },
-  { name: "Coach Registration", href: "/coach-registration" },
+  { name: "Events", href: "/events" },
+  // { name: "Team Registration", href: "/team-registration" },
+  // { name: "Coach Registration", href: "/coach-registration" },
   { name: "Contact", href: "/contact" },
   { name: "Gallery", href: "/gallery" },
 ];
