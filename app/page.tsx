@@ -45,13 +45,18 @@ const Home = () => {
 
       {/* Video Container with Overlay */}
       <div className="w-screen aspect-video mb-12 relative -mx-[calc((100vw-100%)/2)]">
-        <iframe
-          className="w-full h-full absolute inset-0"
-          src="https://www.youtube.com/embed/Ee6GKar2eb0?si=SIzr_V6IjJDBMeyH&autoplay=1&mute=1&controls=0&loop=1&playlist=Ee6GKar2eb0"
-          title="EPL International Pro Player Experience"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/about/test.png"
+        >
+          <source src="/about/show.mov" type="video/quicktime" />
+          <source src="/about/show.mov" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
         {/* Overlay Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-40">
