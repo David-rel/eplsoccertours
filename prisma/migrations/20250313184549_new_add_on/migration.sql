@@ -1,0 +1,31 @@
+-- CreateTable
+CREATE TABLE `Registration` (
+    `id` VARCHAR(191) NOT NULL,
+    `eventId` VARCHAR(191) NOT NULL,
+    `fullName` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NOT NULL,
+    `city` VARCHAR(191) NOT NULL,
+    `state` VARCHAR(191) NOT NULL,
+    `zipCode` VARCHAR(191) NOT NULL,
+    `country` VARCHAR(191) NOT NULL,
+    `dateOfBirth` DATETIME(3) NOT NULL,
+    `emergencyContact` VARCHAR(191) NOT NULL,
+    `emergencyPhone` VARCHAR(191) NOT NULL,
+    `specialRequirements` VARCHAR(191) NULL,
+    `numberOfParticipants` INTEGER NOT NULL,
+    `totalPrice` DOUBLE NOT NULL,
+    `transactionId` VARCHAR(191) NOT NULL,
+    `travelers` JSON NOT NULL,
+    `travelersSummary` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `registrationDate` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    INDEX `Registration_eventId_idx`(`eventId`),
+    INDEX `Registration_email_idx`(`email`),
+    INDEX `Registration_transactionId_idx`(`transactionId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

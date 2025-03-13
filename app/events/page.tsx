@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Event {
   id: number;
@@ -21,7 +22,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -45,17 +46,6 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  // Close modal when clicking escape
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setSelectedEvent(null);
-      }
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, []);
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -63,51 +53,6 @@ export default function EventsPage() {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const PayButton = ({ event }: { event: Event }) => {
-    // Check if this is a test payment link
-    const isTestPayment =
-      event.paymentLink && event.paymentLink.includes("test-");
-
-    if (event.paymentLink) {
-      return (
-        <a
-          href={event.paymentLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`inline-flex items-center justify-center gap-2 px-6 py-3 ${
-            isTestPayment
-              ? "bg-yellow-500 hover:bg-yellow-600"
-              : "bg-blue-600 hover:bg-blue-700"
-          } text-white rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-          {isTestPayment ? "Test Payment" : "Pay Now"}
-        </a>
-      );
-    }
-
-    return (
-      <Link
-        href="/register"
-        className="inline-flex items-center justify-center px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors duration-300"
-      >
-        Register Now
-      </Link>
-    );
   };
 
   if (loading) {
@@ -143,7 +88,7 @@ export default function EventsPage() {
               <div
                 key={event.id}
                 className="group bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-                onClick={() => setSelectedEvent(event)}
+                onClick={() => router.push(`/events/${event.id}`)}
               >
                 <div className="relative aspect-[16/9] w-full overflow-hidden">
                   <img
@@ -184,95 +129,10 @@ export default function EventsPage() {
                     <span className="text-sm bg-gray-100 px-3 py-1 rounded-full">
                       Ages {event.minAge} - {event.maxAge}
                     </span>
-
-                    {event.paymentLink && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open(event.paymentLink, "_blank");
-                        }}
-                        className={`${
-                          event.paymentLink.includes("test-")
-                            ? "text-yellow-600 hover:text-yellow-800"
-                            : "text-blue-600 hover:text-blue-800"
-                        } text-sm font-medium flex items-center`}
-                      >
-                        {event.paymentLink.includes("test-")
-                          ? "Test Payment"
-                          : "Pay Now"}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 ml-1"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Modal */}
-        {selectedEvent && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
-            onClick={() => setSelectedEvent(null)}
-          >
-            <div
-              className="relative max-w-4xl w-full bg-white rounded-lg overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-70 z-10"
-              >
-                ×
-              </button>
-              <div className="relative aspect-video w-full">
-                <img
-                  src={selectedEvent.coverImage}
-                  alt={selectedEvent.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-8">
-                <h2 className="text-3xl font-bold mb-2">
-                  {selectedEvent.name}
-                </h2>
-                <div className="flex justify-between items-center mb-4">
-                  <p className="text-gray-600">
-                    {formatDate(selectedEvent.startDate)} -{" "}
-                    {formatDate(selectedEvent.endDate)}
-                  </p>
-                  <div className="flex items-center">
-                    <p className="text-2xl font-bold mr-2">
-                      ${selectedEvent.pricePerPerson.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">per person</p>
-                  </div>
-                </div>
-                <p className="text-gray-700 mb-6">
-                  {selectedEvent.description}
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm bg-gray-100 px-3 py-1 rounded-full">
-                    Ages {selectedEvent.minAge} - {selectedEvent.maxAge}
-                  </span>
-                  <PayButton event={selectedEvent} />
-                </div>
-              </div>
-            </div>
           </div>
         )}
       </div>

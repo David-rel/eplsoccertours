@@ -19,6 +19,20 @@ const checkAuth = (req: NextRequest) => {
   );
 };
 
+// Sanitize filename to remove special characters and spaces
+const sanitizeFilename = (filename: string): string => {
+  // Remove file extension
+  const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+  // Replace spaces and special characters with hyphens
+  const sanitized = nameWithoutExt
+    .replace(/[^a-zA-Z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .toLowerCase();
+  // Get original extension
+  const ext = filename.split(".").pop()?.toLowerCase() || "";
+  return `${sanitized}.${ext}`;
+};
+
 export async function POST(req: NextRequest) {
   try {
     // Check authentication
@@ -44,8 +58,9 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create unique filename
-    const filename = `event-${Date.now()}-${file.name}`;
+    // Create unique filename with sanitized original name
+    const sanitizedOriginalName = sanitizeFilename(file.name);
+    const filename = `event-${Date.now()}-${sanitizedOriginalName}`;
     const uploadDir = join(process.cwd(), "public", "uploads");
     const filepath = join(uploadDir, filename);
 

@@ -499,7 +499,7 @@ const About = () => {
           {/* Red button with black hover */}
           <div className="flex justify-center mt-16 mb-12">
             <Link
-              href="/team-experience"
+              href="/coach-experience"
               className="bg-red-500 hover:bg-black text-white text-2xl font-medium py-4 px-10 transition-all duration-300 tracking-wider"
             >
               Next Step to Experiencing Life as a World Class Coach

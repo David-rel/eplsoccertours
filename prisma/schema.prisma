@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,11 +13,41 @@ model Event {
   description    String   @db.Text
   pricePerPerson Float
   coverImage     String
-  paymentLink    String? // Optional payment link field
   startDate      DateTime
   endDate        DateTime
   minAge         Int      @default(0)
   maxAge         Int      @default(99)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  paymentLink    String?
+}
+
+model Registration {
+  id                   String   @id @default(cuid())
+  eventId              String
+  fullName             String
+  email                String
+  phone                String
+  address              String
+  city                 String
+  state                String
+  zipCode              String
+  country              String
+  dateOfBirth          DateTime
+  emergencyContact     String
+  emergencyPhone       String
+  specialRequirements  String?
+  numberOfParticipants Int
+  totalPrice           Float
+  transactionId        String
+  travelers            Json
+  travelersSummary     String
+  status               String
+  registrationDate     DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([email])
+  @@index([transactionId])
 }
