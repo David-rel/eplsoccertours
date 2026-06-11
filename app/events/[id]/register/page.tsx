@@ -787,7 +787,7 @@ export default function RegisterPage() {
               </button>
 
               <p className="text-sm text-gray-500 text-center">
-                By clicking "Pay", you agree to our Terms & Conditions and
+                By clicking &quot;Pay&quot;, you agree to our Terms & Conditions and
                 Privacy Policy.
               </p>
             </div>
