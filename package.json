@@ -12,9 +12,9 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@prisma/client": "^6.5.0",
-    "next": "15.2.1",
-    "prisma": "^6.5.0",
+    "@prisma/client": "^6.19.3",
+    "next": "^15.5.19",
+    "prisma": "^6.19.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -25,9 +25,16 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.17",
     "eslint": "^9",
-    "eslint-config-next": "15.2.1",
-    "postcss": "^8.4.35",
+    "eslint-config-next": "^15.5.19",
+    "postcss": "^8.5.15",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "overrides": {
+    "brace-expansion": "1.1.15",
+    "@hono/node-server": "2.0.4",
+    "next": {
+      "postcss": "8.5.15"
+    }
   }
 }

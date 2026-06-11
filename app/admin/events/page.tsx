@@ -669,7 +669,7 @@ export default function EventsAdminPage() {
                     <br />
                     <span className="font-medium">
                       You can still create events and generate payment links,
-                      but they won't be saved until the database connection is
+                      but they will not be saved until the database connection is
                       restored.
                     </span>
                   </p>

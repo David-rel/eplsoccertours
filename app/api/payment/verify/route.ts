@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-async function verifyCard(cardData: any) {
+type CardData = {
+  cardNumber: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
+  billingAddress: string;
+  billingZip: string;
+  cardholderName: string;
+};
+
+async function verifyCard(cardData: CardData) {
   try {
     const response = await fetch(
       "https://api.sandbox.accept.blue/api/v2/transactions/verify",
@@ -39,7 +49,7 @@ async function verifyCard(cardData: any) {
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
+    const data = (await req.json()) as CardData;
     const verificationResult = await verifyCard(data);
 
     return NextResponse.json(verificationResult);

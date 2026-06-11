@@ -9,7 +9,7 @@ const TeamRegistration = () => {
           <span>Welcome Team!</span>
         </h1>
         <h1 className="container mx-auto px-4 text-lg text-center tracking-wider leading-relaxed flex flex-col gap-6 mb-16">
-          <span>Here's your third step.</span>
+          <span>Here&apos;s your third step.</span>
         </h1>
       </div>
       <div className="pt-12 pb-12">

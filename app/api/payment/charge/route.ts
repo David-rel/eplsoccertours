@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
-async function processCharge(chargeData: any) {
+type ChargeData = {
+  amount: number;
+  cardNumber: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
+  cardholderName: string;
+  billingAddress: string;
+  billingZip: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+  eventName: string;
+  email: string;
+  fullName: string;
+};
+
+async function processCharge(chargeData: ChargeData) {
   try {
     const response = await fetch(
       "https://api.sandbox.accept.blue/api/v2/transactions/charge",
@@ -58,7 +80,7 @@ async function processCharge(chargeData: any) {
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
+    const data = (await req.json()) as ChargeData;
     const chargeResult = await processCharge(data);
 
     return NextResponse.json(chargeResult);
